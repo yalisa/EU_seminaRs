@@ -121,25 +121,38 @@ data17_s %>%
 
 ```{r}
 data17_s %>% 
-  select() %>% 
-  filter() %>% 
-  count()
+  #select(contains("amount"), reg_name) %>% 
+  select(victims_amount, vehicles_amount) %>% 
+  filter(vehicles_amount > 2 & vehicles_amount <= 8) %>% # или >= 3 & < 9
+  count(vehicles_amount)
 ```
 
 *Задание со звездочкой:*
 Сделать все то же самое, но отфильтровать еще и по областям. Другими словами, reg_name должен содержать только области.
 (see grepl())
 
+
 ```{r}
+# просто посчитаем сколько областей 
 data17_s %>% 
-  select() %>% 
-  filter() %>% 
-  filter() %>% 
-  count()
+  select(reg_name) %>% 
+  filter(grepl("область", reg_name)) %>% 
+  count(reg_name) %>% 
+  nrow()
 ```
 
 
-summarize(
+
+```{r}
+data17_s %>% 
+  select(contains("amount"), reg_name) %>% 
+  filter(vehicles_amount > 2 & vehicles_amount <= 8) %>% 
+  filter(grepl("область", reg_name)) %>% 
+  count(vehicles_amount)
+```
+
+
+summarize() - можем выполнять простые математические операции по колонкам
 mean(),
 max().
 ...
@@ -153,7 +166,11 @@ max().
 data17_s %>% 
   select(reg_name, vehicles_amount) %>% 
   summarise(
-    
+    mean_1 = round(mean(vehicles_amount)),
+    median = median(vehicles_amount),
+    number = sum(vehicles_amount), 
+    max = max(vehicles_amount),
+    min(vehicles_amount)
   ) 
 ```
 

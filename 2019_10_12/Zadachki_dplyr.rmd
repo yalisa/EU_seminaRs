@@ -35,8 +35,8 @@ filter()
 Выбрать в данных только те аварии, где есть пострадавшие
 ```{r}
 data17_s %>% 
-  select() %>% 
-  filter()
+  select(victims_amount) %>% 
+  filter(victims_amount > 0)
 ```
 
 1.2. Выбрать в данных только аварии по типам (crash_type_name) "Столкновение" и "Опрокидывание"

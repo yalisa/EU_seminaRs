@@ -180,22 +180,48 @@ group_by()
 ```{r}
 data17_s %>% 
   select(reg_name, vehicles_amount) %>% 
-  group_by() %>%  
+  group_by(reg_name) %>%  
   summarise(
-    
-  )
+    number_tak_nazvali = sum(vehicles_amount)
+  ) %>% 
+  arrange(-number_tak_nazvali)
 ```
 
 
 Вопрос: Сколько было аварий с участием 5 машин в Владимирской области в 2017 году?
 ```{r}
+data17_s %>%
+  filter(reg_name == "Владимирская область") %>%
+  filter(vehicles_amount == 5) %>% 
+  count(vehicles_amount)
   
+# пример функциональной фиксированности на group_by ^^)
+data17_s %>%
+  group_by(reg_name) %>% 
+  count(vehicles_amount) %>% 
+  filter(n == 5& reg_name == "Владимирская область")
+
 ```
 
 
 Вопрос: Сколько машин в среднем попадает в ДТП по регионам? (Округлить до целого числа); Сколько регионов, в которых в среднем в ДТП участвует больше 1 машины?
 ```{r}
+data17_s %>%
+  # select() - когда принципиално сколько колонок...
+  group_by(reg_name) %>% 
+  summarise(
+   mean = round(mean(vehicles_amount))
+  ) %>% 
+  count(mean)
 
+data17_s %>%
+  # select() - когда принципиално сколько колонок...
+  group_by(reg_name) %>% 
+  summarise(
+   mean = round(mean(vehicles_amount))
+  ) %>%
+  filter(mean > 1) %>% 
+  nrow()
 ```
 
 mutate()
@@ -203,13 +229,17 @@ mutate()
 Создать переменную "счастливчики" - ребята, которые попали в ДТП, но не пострадали
 ```{r}
 data17_s %>% 
-  select(reg_name, contains("amount")) %>% 
-  mutate(happy = )
+  select(participants_amount, victims_amount) %>% 
+  mutate(happy = participants_amount - victims_amount)
 ```
 
 Вопрос: А есть такие случаи, что в данных ошибка и пострадавших больше, чем участников? (счастливчиков отрицательное число)
 Как это можно объяснить?
 ```{r}
+data17_s %>% 
+  select(participants_amount, victims_amount) %>% 
+  mutate(happy = participants_amount - victims_amount) %>% 
+  arrange(happy)
 
 ```
 
@@ -217,14 +247,24 @@ data17_s %>%
 
 Шок контент: немного статистики! Есть ли связь между количеством машин и количеством счастливчиков?
 ```{r}
-test = data17_s %>% 
-  select() %>% 
-  mutate(happy = )
+test <-  data17_s %>% 
+  select(participants_amount, victims_amount) %>% 
+  mutate(happy = participants_amount - victims_amount) %>% 
 ```
 
 ```{r}
+cor.test(test$victims_amount, test$happy)
+```
+
+```{r}
+ggplot()+
+  geom_point(data = test, aes(x = happy, y = vehiles_amount))+
+  geom_smooth(data = test, aes(x = happy, y = vehiles_amount), method = "lm")
 
 ```
+
+
+
 
 
 join()
@@ -248,6 +288,9 @@ d = c(7:9)
 data1 = data.frame(id = id2, v1 = a)
 data2 = data.frame(id = id, v2 = b, v3 = d)
 ```
+
+
+
 
 ```{r}
 df_f = full_join(data1, data2, by = "id") #полное соединение
@@ -273,7 +316,9 @@ data_full$crash_date = ymd(data_full$crash_date)
 Нужно создать переменную год, которая будет дублировать переменную crash_date, но будет округлена до года: round_date()
 Проверьте, точно ли у нас 64693	наблюдений по 2017 году и 20424	по 2018
 ```{r}
-
+data_full %>% 
+  mutate(year = round_date(crash_date, unit = "year")) %>% 
+  count(year)
 ```
 
 
@@ -281,12 +326,30 @@ data_full$crash_date = ymd(data_full$crash_date)
 
 1) Посмотрим, сколько было ДТП в регионах в 2017 и 2018 годах
 ```{r}
+# 02.08
+data_full %>%
+  mutate(year = round_date(crash_date, unit = "year")) %>%
+  #select...
+  group_by(reg_name) %>% 
+  count(year) %>% 
+  #pivot_wider(names_from = year, values_from = n) %>% 
+  #remane(y_2017 = "2017-01-01",
+  #       y_2018 = "2018-01-01") %>% 
+  ggplot()+
+  geom_bar(aes(x = reg_name, n), stat = "identity")+
+  facet_grid(~year)#+
+  #coord_flip()
 
+
+
+  
 ```
 
 2) Попробуйте это нарисовать
 ```{r}
-
+ggplot()+
+  
+  
 ```
 
 Общая картинка ясна. Но это относится прям ко всем регионам или есть места, которые не поддались общей динамике?

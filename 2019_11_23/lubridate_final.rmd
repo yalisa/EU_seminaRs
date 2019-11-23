@@ -1,0 +1,292 @@
+---
+title: "lubridate_final"
+author: "Dimvdali"
+date: "23 11 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", collapse = TRUE, message = F, warning = F)
+```
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggridges)
+```
+
+*time format*
+
+Friends of ymd()
+3!
+ymd() , ydm() , mdy() , myd() , dmy() , dym() dmy()
+
+      
+
+```{r}
+ymd("20110604")
+mdy("06-04-2011")
+dmy("04/06/2011")
+date1 = ymd_hms("2011-06-04 12:00:48")
+```
+
+Extract info
+
+```{r}
+year(date1)
+month(date1)
+month(date1, label = TRUE)
+wday(date1)
+wday(date1, label = TRUE)
+yday(date1)
+hour(date1)
+minute(date1)
+second(date1)
+```
+
+*assign new value*
+
+```{r}
+val = make_date(year = 2005, month = 9, day = 4)
+#make_datetime() + time (wow, unexpected)
+class(val)
+
+day(val) = 8
+month(val) = 12
+year(val) = 2007
+
+val
+```
+
+
+*time zones*
+
+[wiki](https://en.wikipedia.org/wiki/List_of_time_zone_abbreviations)
+
+
+* `?timezones`, 
+* `?OlsonNames`
+
+**with_tz()**
+**force_tz()**
+
+```{r}
+date = "23/11/2019 15:20"
+date = dmy_hm(date)
+```
+
+```{r}
+#how much time?
+Sys.time() #base
+now() #lubridate
+today()
+```
+
+```{r}
+#В каком мы часовом поясе?
+Sys.timezone()
+#А какие еще есть?
+head(OlsonNames(), 10)
+#указать, в каком часовом поясе мы находимся, без изменения времени
+force_tz(date, tzone = "Europe/Moscow")
+
+#уточнить, то же время но в другом часовом поясе
+with_tz(date, tzone = "US/Pacific")
+```
+
+*time difference*
+
+```{r}
+date = "23/11/2019 15:20"
+date1 = "21-09-2010 10:40"
+
+date = dmy_hm(date)
+date1 = dmy_hm(date1)
+
+date - years(2)
+difference = date - date1
+difference
+difference/ddays(1)
+difference/dweeks(1)
+difference/dhours(1)
+
+# to deadline 920 minutes
+#“secs”, “mins”, “hours”, “days”, “weeks”
+Sys.time() - date1
+difftime(Sys.Date(), date, units = "mins")
+```
+
+
+*Time spans*
+
+`durations`, which represent an exact number of seconds.
+
+```{r}
+age = today() - ymd(19961105)
+age
+```
+
+`periods`, which represent human units like weeks and months.
+
+```{r}
+as.duration(age)
+tomorrow = today() + ddays(1)
+#febuary tricks?
+tomorrow = today() + days(1)
+tomorrow
+```
+
+
+`intervals`, which represent a starting and ending point.
+
+```{r}
+date2 = dmy("5 January 1961")
+years(1) / days(1)
+next_year <- today() + years(1)
+(today() %--% date2) / ddays(1)
+hz = interval(today(), date2) 
+(today() %--% next_year) %/% days(1)
+int_end(hz)
+int_start(hz)
+as.period(hz)
+as.duration(hz)
+```
+
+```{r}
+7 %/% 4
+7 %% 4
+```
+
+Falls Within An Interval?
+
+```{r}
+int <- interval(ymd("2001-01-01"), ymd("2002-01-01"))
+int2 <- interval(ymd("2001-06-01"), ymd("2002-01-01"))
+
+ymd("2001-05-03") %within% int 
+int2 %within% int 
+ymd("1999-01-01") %within% int 
+```
+
+
+*round dates*
+
+units: 
+
+
+* second, 
+* minute, 
+* hour, 
+* day, 
+* week, 
+* month, 
+* bimonth, 
+* quarter, 
+* season, 
+* halfyear and 
+* year.
+
+?round_date()
+
+```{r}
+#ceiling_date() #takes a date-time object and rounds it up to the nearest boundary of the specified time unit.
+ceiling_date(date, unit = "day")
+#floor_date() # takes a date-time object and rounds it down to the nearest boundary of the specified time unit.
+floor_date(date, unit = "year")
+```
+
+*Mathematics*
+
+```{r}
+ymd("2011-01-01") + days()
+days() * 2
+```
+
+
+*it's time for beautiful pictures*
+
+```{r}
+data = read.csv2("/Users/aleksandra/Desktop/2018-2019/ЕУ/митап/митап_2019/dplyr/shengen/data_2017.csv")
+```
+
+review dplyr %>% 
+
+
+[ %>% ](https://twitter.com/daniellequinn88/status/1193777505746014209)
+
+```{r}
+data = data %>% 
+  select(-1)
+
+data$crash_date = ymd(data$crash_date)
+#data$crash_time = as.POSIXct(data$crash_time, format = "%H:%M")
+```
+
+Столкновение	
+Опрокидывание	
+Наезд на пешехода
+
+```{r}
+data %>% 
+ mutate(month = month(crash_date, label = TRUE)) %>% 
+  group_by(month, crash_type_name) %>% 
+  filter(crash_type_name == "Столкновение" | crash_type_name == "Опрокидывание" | crash_type_name == "Наезд на пешехода") %>% 
+  count(crash_type_name) %>% 
+  ggplot(aes(x = n, y = crash_type_name, height = ..density..))+
+  geom_density_ridges(stat = "density")
+```
+
+
+```{r, echo=FALSE}
+#crash1 = 
+data %>% 
+ mutate(month = month(crash_date, label = TRUE)) %>% 
+  group_by(month, crash_type_name) %>% 
+  filter(crash_type_name == "Столкновение" | crash_type_name == "Опрокидывание" | crash_type_name == "Наезд на пешехода") %>% 
+  count(crash_type_name) %>% 
+  ggplot(aes(x = month, y = n))+
+  geom_bar(stat = "identity", color = "grey35", fill = "#eba487")+
+  facet_grid(crash_type_name ~.)+
+  theme_minimal()+
+  theme(
+    text = element_text(family = "Open Sans"),
+    plot.margin = unit(rep(1.2, 4), "cm"),
+    plot.title = element_text(size = 16, 
+                              face = "bold",
+                              color = "#f2f3f5",
+                              margin = margin(b = 8)),
+    plot.background = element_rect(fill = "#1a1c2e"),
+    plot.subtitle = element_text(size = 9,
+                                 face = "italic",
+                                 lineheight = 1.1,
+                                 color = "#e6e7eb",
+                                 margin = margin(b = 45)),
+    panel.grid.minor.x = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    panel.grid.major.y = element_line(color = "#21243a"),
+    panel.grid.major.x = element_line(color = "#21243a"),
+    axis.line = element_line(color = "#878890"),
+    axis.ticks = element_line(color = "#c2c3cf"),
+    axis.text.x = element_text(margin = margin(t = 5)),
+    axis.text = element_text(color = "#e6e7eb", size = 10),
+    strip.text.y = element_text(size = 8, colour = "#e6e7eb", angle = 0, face = "bold"))+
+  ylab("")+
+  xlab("")+
+   labs(
+    title = "Что случилось с июлем?",
+    subtitle = paste0('Я не ожидала такой подставы от июля.\n', "Вообще, строго говоря, вопрос нетривиальный.\n", "Я бы поняла отсутствие данных с обоих концов года, но июль..."))
+
+#ggsave(plot = crash1, "crash1.png", width = 10, height = 7, scale = 1, dpi = 600, units = "in")
+```
+
+
+```{r}
+
+```
+
+
+**Прикольные штуки по поводу того, как гуглить**
+
+* [Как гуглить русский R](http://mtweb.cs.ucl.ac.uk/mus/bin/install_R/R-3.1.1/src/library/base/po/ru.po)
+
+* [RGoogle!](https://rseek.org)

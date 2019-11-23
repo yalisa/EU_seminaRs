@@ -239,12 +239,17 @@ data$crash_date <- ymd(data$crash_date)
 ??аезд на пешехода
 
 ```{r}
-data %>% 
- mutate(month = month(crash_date, label = TRUE)) %>% 
-  group_by(month, crash_type_name) %>% 
-  filter(crash_type_name == "Столкновение" | crash_type_name == "Опрокидывание" | crash_type_name == "??аезд на пешехода") %>% 
-  count(crash_type_name) %>% 
-  ggplot(aes(x = n, y = crash_type_name, height = ..density..))+
+# code -> reformat code
+data %>%
+  mutate(month = month(crash_date, label = TRUE)) %>%
+  group_by(month, crash_type_name) %>%
+  filter(
+  crash_type_name == "Столкновение" |
+  crash_type_name == "Опрокидывание" |
+  crash_type_name == "??аезд на пешехода"
+  ) %>%
+  count(crash_type_name) %>%
+  ggplot(aes(x = n, y = crash_type_name, height = ..density..)) +
   geom_density_ridges(stat = "density")
 ```
 

@@ -4,6 +4,7 @@ author: "Dimvdali"
 date: "23 11 2019"
 output: html_document
 ---
+(God bless @dimvdali!)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, comment = "#>", collapse = TRUE, message = F, warning = F)
@@ -146,7 +147,7 @@ date2 <- dmy("5 January 1961")
 years(1) / days(1)
 next_year <- today() + years(1)
 (today() %--% date2) / ddays(1) # это интервал, это прикольно https://www.statmethods.net/management/operators.html
-hz = interval(today(), date2) 
+hz <- interval(today(), date2) 
 (today() %--% next_year) %/% days(1)
 int_end(hz)
 int_start(hz)
@@ -171,7 +172,9 @@ ymd("1999-01-01") %within% int
 ```
 
 
-*round dates*
+*round dates* 
+
+<!-- есть три типа округления -->
 
 units: 
 
@@ -188,13 +191,16 @@ units:
 * halfyear and 
 * year.
 
-?round_date()
+?round_date() 
 
 ```{r}
 #ceiling_date() #takes a date-time object and rounds it up to the nearest boundary of the specified time unit.
 ceiling_date(date, unit = "day")
 #floor_date() # takes a date-time object and rounds it down to the nearest boundary of the specified time unit.
 floor_date(date, unit = "year")
+
+# можно окурглить до осени floor_date(date, unit = "season")
+
 ```
 
 *Mathematics*
@@ -208,20 +214,24 @@ days() * 2
 *it's time for beautiful pictures*
 
 ```{r}
-data = read.csv2("/Users/aleksandra/Desktop/2018-2019/ЕУ/митап/митап_2019/dplyr/shengen/data_2017.csv")
+data <- read.csv2("data_2017 (1).csv")
+
+# тут читается какая-то лишняя строчка... 
+# может быть читать диплюровскими функциями
+# data <- read_csv()
 ```
 
 review dplyr %>% 
 
-
+<!-- что делает пайп и зачем он нам нужен -->
 [ %>% ](https://twitter.com/daniellequinn88/status/1193777505746014209)
 
 ```{r}
-data = data %>% 
+data <- data %>% 
   select(-1)
 
-data$crash_date = ymd(data$crash_date)
-#data$crash_time = as.POSIXct(data$crash_time, format = "%H:%M")
+data$crash_date <- ymd(data$crash_date)
+#data$crash_time <- as.POSIXct(data$crash_time, format = "%H:%M")
 ```
 
 Столкновение	

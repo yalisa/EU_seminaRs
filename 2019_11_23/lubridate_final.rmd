@@ -34,7 +34,6 @@ Extract info
 
 ```{r}
 year(date1)
-month(date1)
 month(date1, label = TRUE)
 wday(date1)
 wday(date1, label = TRUE)
@@ -47,13 +46,13 @@ second(date1)
 *assign new value*
 
 ```{r}
-val = make_date(year = 2005, month = 9, day = 4)
+val <- make_date(year = 2005, month = 9, day = 4)
 #make_datetime() + time (wow, unexpected)
 class(val)
 
-day(val) = 8
-month(val) = 12
-year(val) = 2007
+day(val) <- 8
+month(val) <- 12
+year(val) <- 2007
 
 val
 ```
@@ -71,8 +70,8 @@ val
 **force_tz()**
 
 ```{r}
-date = "23/11/2019 15:20"
-date = dmy_hm(date)
+date <- "23/11/2019 15:20"
+date <- dmy_hm(date)
 ```
 
 ```{r}
@@ -83,35 +82,35 @@ today()
 ```
 
 ```{r}
-#В каком мы ча�?овом по�?�?е?
+#В каком мы ча??овом по????е?
 Sys.timezone()
-#�? какие еще е�?ть?
+#?? какие еще е??ть?
 head(OlsonNames(), 10)
-#указать, в каком ча�?овом по�?�?е мы находим�?�?, без изменени�? времени
+#указать, в каком ча??овом по????е мы находим????, без изменени?? времени
 force_tz(date, tzone = "Europe/Moscow")
 
-#уточнить, то же врем�? но в другом ча�?овом по�?�?е
+#уточнить, то же врем?? но в другом ча??овом по????е
 with_tz(date, tzone = "US/Pacific")
 ```
 
 *time difference*
 
 ```{r}
-date = "23/11/2019 15:20"
-date1 = "21-09-2010 10:40"
+date <- "23/11/2019 15:20"
+date1 <- "21-09-2010 10:40"
 
-date = dmy_hm(date)
-date1 = dmy_hm(date1)
+date <- dmy_hm(date)
+date1 <- dmy_hm(date1)
 
 date - years(2)
-difference = date - date1
+difference <- date - date1
 difference
 difference/ddays(1)
 difference/dweeks(1)
 difference/dhours(1)
 
 # to deadline 920 minutes
-#“secs�?, “mins�?, “hours�?, “days�?, “weeks�?
+#“secs???, “mins???, “hours???, “days???, “weeks???
 Sys.time() - date1
 difftime(Sys.Date(), date, units = "mins")
 ```
@@ -122,17 +121,20 @@ difftime(Sys.Date(), date, units = "mins")
 `durations`, which represent an exact number of seconds.
 
 ```{r}
-age = today() - ymd(19961105)
+age <- today() - ymd(19961105)
 age
+
+#age <- today() - ymd(19920825)
+#age
 ```
 
 `periods`, which represent human units like weeks and months.
 
 ```{r}
 as.duration(age)
-tomorrow = today() + ddays(1)
-#febuary tricks?
-tomorrow = today() + days(1)
+tomorrow <- today() + ddays(1)
+#febuary tricks? # есть февраль, с которым проблемы...
+tomorrow <- today() + days(1)
 tomorrow
 ```
 
@@ -140,10 +142,10 @@ tomorrow
 `intervals`, which represent a starting and ending point.
 
 ```{r}
-date2 = dmy("5 January 1961")
+date2 <- dmy("5 January 1961")
 years(1) / days(1)
 next_year <- today() + years(1)
-(today() %--% date2) / ddays(1)
+(today() %--% date2) / ddays(1) # это интервал, это прикольно https://www.statmethods.net/management/operators.html
 hz = interval(today(), date2) 
 (today() %--% next_year) %/% days(1)
 int_end(hz)
@@ -224,13 +226,13 @@ data$crash_date = ymd(data$crash_date)
 
 Столкновение	
 Опрокидывание	
-�?аезд на пешехода
+??аезд на пешехода
 
 ```{r}
 data %>% 
  mutate(month = month(crash_date, label = TRUE)) %>% 
   group_by(month, crash_type_name) %>% 
-  filter(crash_type_name == "Столкновение" | crash_type_name == "Опрокидывание" | crash_type_name == "�?аезд на пешехода") %>% 
+  filter(crash_type_name == "Столкновение" | crash_type_name == "Опрокидывание" | crash_type_name == "??аезд на пешехода") %>% 
   count(crash_type_name) %>% 
   ggplot(aes(x = n, y = crash_type_name, height = ..density..))+
   geom_density_ridges(stat = "density")
@@ -242,7 +244,7 @@ data %>%
 data %>% 
  mutate(month = month(crash_date, label = TRUE)) %>% 
   group_by(month, crash_type_name) %>% 
-  filter(crash_type_name == "Столкновение" | crash_type_name == "Опрокидывание" | crash_type_name == "�?аезд на пешехода") %>% 
+  filter(crash_type_name == "Столкновение" | crash_type_name == "Опрокидывание" | crash_type_name == "??аезд на пешехода") %>% 
   count(crash_type_name) %>% 
   ggplot(aes(x = month, y = n))+
   geom_bar(stat = "identity", color = "grey35", fill = "#eba487")+
@@ -273,8 +275,8 @@ data %>%
   ylab("")+
   xlab("")+
    labs(
-    title = "Что �?лучило�?ь �? июлем?",
-    subtitle = paste0('Я не ожидала такой под�?тавы от июл�?.\n', "Вообще, �?трого говор�?, вопро�? нетривиальный.\n", "Я бы пон�?ла от�?ут�?твие данных �? обоих концов года, но июль..."))
+    title = "Что ??лучило??ь ?? июлем?",
+    subtitle = paste0('Я не ожидала такой под??тавы от июл??.\n', "Вообще, ??трого говор??, вопро?? нетривиальный.\n", "Я бы пон??ла от??ут??твие данных ?? обоих концов года, но июль..."))
 
 #ggsave(plot = crash1, "crash1.png", width = 10, height = 7, scale = 1, dpi = 600, units = "in")
 ```
@@ -287,6 +289,6 @@ data %>%
 
 **Прикольные штуки по поводу того, как гуглить**
 
-* [Как гуглить ру�?�?кий R](http://mtweb.cs.ucl.ac.uk/mus/bin/install_R/R-3.1.1/src/library/base/po/ru.po)
+* [Как гуглить ру????кий R](http://mtweb.cs.ucl.ac.uk/mus/bin/install_R/R-3.1.1/src/library/base/po/ru.po)
 
 * [RGoogle!](https://rseek.org)

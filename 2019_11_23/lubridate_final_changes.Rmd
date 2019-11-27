@@ -322,6 +322,9 @@ data %>%
 #ggsave(plot = time, "time.png", width = 10, height = 7, scale = 1, dpi = 600, units = "in")
 ```
 
+```{r}
+
+```
 
 **Прикольные штуки по поводу того, как гуглить**
 

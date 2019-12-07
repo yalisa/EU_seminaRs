@@ -57,6 +57,7 @@ remDr <- driver[["client"]]
 
 remDr$browserName <- 'firefox'
 remDr$open()
+#Sys.sleep() - что бы не зафризили, вставлять когда используется цикл на несколько страник
 remDr$navigate('https://www.dndbeyond.com/monsters?')
 
 #a <- remDr$findElement(using="css selector", '.div.b-pagination:nth-child(1)>ul:nth-child(1)>li:nth-child(2)>a:nth-child(1)')

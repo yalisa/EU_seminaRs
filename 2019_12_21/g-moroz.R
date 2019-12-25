@@ -12,7 +12,7 @@ got_chars %>%
   unlist() %>% 
   table()
 
-
+library(tidyverse)
 dict <- read_tsv("https://raw.githubusercontent.com/agricolamz/DS_for_DH/master/data/freq_dict_2011.csv")
 
 dict$lemma %>%
@@ -27,3 +27,11 @@ dict$lemma %>%
   coord_flip()+
   labs(x = NULL, y = NULL, caption = "данные из [Ляшевская, Шаров 2011]")
   
+
+# rowwise()
+
+
+
+map(list, rmarkdown::render)
+list.files(pattern = "md")
+
